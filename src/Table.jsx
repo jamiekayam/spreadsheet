@@ -1,4 +1,6 @@
+// Table.jsx
 import React, { useState } from 'react';
+import RowFunctions from './RowFunctions';
 
 const Table = () => {
     // Table data state (array of row objects)
@@ -6,110 +8,13 @@ const Table = () => {
         { id: 1, position: 1, column2: "", column3: "", column4: "", column5: "", column6: "", column7: "" },
     ]);
 
-    // Function to handle creating a new row above a given row
-    const createNewRowAbove = (rowId) => {
-        const maxId = Math.max(...rows.map(row => row.id));
-
-        const newRow = {
-            id: maxId + 1,
-            position: 1,
-            column2: "",
-            column3: "",
-            column4: "",
-            column5: "",
-            column6: "",
-            column7: ""
-        };
-
-        const rowIndex = rows.findIndex(row => row.id === rowId);
-        const newRows = [
-            ...rows.slice(0, rowIndex),
-            newRow,
-            ...rows.slice(rowIndex)
-        ];
-
-        const updatedRows = newRows.map((row, index) => ({
-            ...row,
-            position: index + 1
-        }));
-
-        setRows(updatedRows);
-    };
-
-    // Function to handle creating a new row below a given row
-    const createNewRowBelow = (rowId) => {
-        const maxId = Math.max(...rows.map(row => row.id));
-
-        const newRow = {
-            id: maxId + 1,
-            position: 1,
-            column2: "",
-            column3: "",
-            column4: "",
-            column5: "",
-            column6: "",
-            column7: ""
-        };
-
-        const rowIndex = rows.findIndex(row => row.id === rowId);
-        const newRows = [
-            ...rows.slice(0, rowIndex + 1),
-            newRow,
-            ...rows.slice(rowIndex + 1)
-        ];
-
-        const updatedRows = newRows.map((row, index) => ({
-            ...row,
-            position: index + 1
-        }));
-
-        setRows(updatedRows);
-    };
-
-    // Function to handle moving a row up
-    const moveRowUp = (rowId) => {
-        const rowIndex = rows.findIndex(row => row.id === rowId);
-
-        if (rowIndex === 0) return; // Row is already at the top
-
-        const updatedRows = [...rows];
-        const rowToMove = updatedRows[rowIndex];
-        const rowAbove = updatedRows[rowIndex - 1];
-
-        updatedRows[rowIndex] = { ...rowAbove, position: rowIndex + 1 };
-        updatedRows[rowIndex - 1] = { ...rowToMove, position: rowIndex };
-
-        setRows(updatedRows);
-    };
-
-    // Function to handle moving a row down
-    const moveRowDown = (rowId) => {
-        const rowIndex = rows.findIndex(row => row.id === rowId);
-
-        if (rowIndex === rows.length - 1) return; // Row is already at the bottom
-
-        const updatedRows = [...rows];
-        const rowToMove = updatedRows[rowIndex];
-        const rowBelow = updatedRows[rowIndex + 1];
-
-        updatedRows[rowIndex] = { ...rowBelow, position: rowIndex + 1 };
-        updatedRows[rowIndex + 1] = { ...rowToMove, position: rowIndex + 2 };
-
-        setRows(updatedRows);
-    };
-
-    // Function to delete a row and update positions
-    const deleteRow = (rowId) => {
-        const updatedRows = rows.filter(row => row.id !== rowId);
-
-        // Reassign positions after deletion
-        const reIndexedRows = updatedRows.map((row, index) => ({
-            ...row,
-            position: index + 1
-        }));
-
-        setRows(reIndexedRows);
-    };
+    const {
+        createNewRowAbove,
+        createNewRowBelow,
+        moveRowUp,
+        moveRowDown,
+        deleteRow
+    } = RowFunctions({ rows, setRows });
 
     // Render the table
     return (
@@ -119,13 +24,13 @@ const Table = () => {
                     <tr>
                         <th>Row Position</th>
                         <th>Row ID</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th>Column 1</th>
                         <th>Column 2</th>
-                        <th>Column 3</th>
-                        <th>Column 4</th>
-                        <th>Column 5</th>
-                        <th>Column 6</th>
-                        <th>Column 7</th>
-                        <th>Actions</th> {/* New column for delete button */}
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
