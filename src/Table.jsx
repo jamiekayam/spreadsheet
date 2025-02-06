@@ -82,6 +82,93 @@ const Table = () => {
             }))
         );
     };
+    // Function to move a column to the right
+    const moveColumnRight = (columnId) => {
+        setColumns((prevColumns) => {
+            // Find the clicked column and its position
+            const clickedColumn = prevColumns.find(col => col.id === columnId);
+            if (!clickedColumn) return prevColumns;
+
+            // Check if this column is already the last one, no need to move
+            if (clickedColumn.position === prevColumns.length) return prevColumns;
+
+            // Find the next column
+            const nextColumn = prevColumns.find(col => col.position === clickedColumn.position + 1);
+            if (!nextColumn) return prevColumns;
+
+            // Swap positions between the clicked column and the next column
+            const updatedColumns = prevColumns.map(col =>
+                col.id === clickedColumn.id
+                    ? { ...col, position: clickedColumn.position + 1 }
+                    : col.id === nextColumn.id
+                        ? { ...col, position: clickedColumn.position }
+                        : col
+            );
+
+            // Sort columns by position to ensure correct order
+            updatedColumns.sort((a, b) => a.position - b.position);
+
+            return updatedColumns;
+        });
+    };
+    // Function to move a column left
+    const moveColumnLeft = (columnId) => {
+        setColumns((prevColumns) => {
+            // Find the clicked column and its position
+            const clickedColumn = prevColumns.find(col => col.id === columnId);
+            if (!clickedColumn) return prevColumns;
+
+            // Find the column to the left of the clicked column
+            const leftColumn = prevColumns.find(col => col.position === clickedColumn.position - 1);
+            if (!leftColumn) return prevColumns; // If there's no column to the left, do nothing
+
+            // Swap the positions of the clicked column and the left column
+            const updatedColumns = prevColumns.map(col => {
+                if (col.id === clickedColumn.id) {
+                    return { ...col, position: col.position - 1 }; // Move clicked column left
+                }
+                if (col.id === leftColumn.id) {
+                    return { ...col, position: col.position + 1 }; // Move left column right
+                }
+                return col;
+            });
+
+            // Sort columns by position
+            updatedColumns.sort((a, b) => a.position - b.position);
+
+            return updatedColumns;
+        });
+    };
+    // Function to delete a column and update positions
+    const deleteColumn = (columnId) => {
+        setColumns((prevColumns) => {
+            // Find the column to be deleted
+            const columnToDelete = prevColumns.find(col => col.id === columnId);
+            if (!columnToDelete) return prevColumns;
+
+            // Remove the column from the array
+            const updatedColumns = prevColumns.filter(col => col.id !== columnId);
+
+            // Reassign positions for all columns after deletion
+            const reIndexedColumns = updatedColumns.map((col, index) => ({
+                ...col,
+                position: index + 1 // Re-index columns starting from position 1
+            }));
+
+            return reIndexedColumns;
+        });
+
+        // Update rows to reflect the column deletion
+        setRows((prevRows) =>
+            prevRows.map(row => {
+                const updatedRow = { ...row };
+                // Remove the key for the deleted column
+                delete updatedRow[`column${columnId}`];
+                return updatedRow;
+            })
+        );
+    };
+
     // Function to handle creating a new row above a given row
     const createNewRowAbove = (rowId) => {
         const maxId = Math.max(...rows.map(row => row.id));
@@ -193,9 +280,11 @@ const Table = () => {
                                     CREATE New Column on LEFT
                                 </button>
                                 <br />
-                                <button type="button" id="buttonMoveColumnLeft">MOVE this Column LEFT</button><br />
-                                <button type="button" id="buttonMoveColumnRight">MOVE this Column RIGHT</button><br />
-                                <button type="button" id="buttonDeleteColumn">DELETE this Column</button>
+                                <button type="button" id="buttonMoveColumnLeft" onClick={() => moveColumnLeft(col.id)}>MOVE this Column LEFT</button><br />
+                                <button type="button" id="buttonMoveColumnRight" onClick={() => moveColumnRight(col.id)}>MOVE this Column RIGHT</button><br />
+                                <button type="button" id="buttonDeleteColumn" onClick={() => deleteColumn(col.id)}>
+                                    DELETE this Column
+                                </button>
                             </th>
                         ))}
                     </tr>
