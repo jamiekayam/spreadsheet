@@ -177,13 +177,9 @@ const Table = () => {
             <table border="1">
                 <thead>
                     <tr>
-                        <th>Row Position</th>
-                        <th>Row ID</th>
-                        <th>Create Row Above Button</th>
-                        <th>Create Row Below Button</th>
-                        <th>Move Row Up Button</th>
-                        <th>Move Row Down Button</th>
-                        <th>Delete Row Button</th>
+                        <th>
+                        </th>
+
                         {columns.map(col => (
                             <th key={col.id}>
                                 Column ID: {col.id}<br />
@@ -207,29 +203,23 @@ const Table = () => {
                 <tbody>
                     {rows.map(row => (
                         <tr key={row.id}>
-                            <td>{row.position}</td>
-                            <td>{row.id}</td>
-                            <td>
+                            <td>Row Position: {row.position}<br />Row ID: {row.id}<br />
                                 <button type="button" onClick={() => createNewRowAbove(row.id)} id={`buttonCreateRowAboveRow-${row.id}`}>
                                     Create New Row ABOVE
                                 </button>
-                            </td>
-                            <td>
+                                <br />
                                 <button type="button" onClick={() => createNewRowBelow(row.id)} id={`buttonCreateRowBelowRow-${row.id}`}>
                                     Create New Row BELOW
                                 </button>
-                            </td>
-                            <td>
+                                <br />
                                 <button type="button" onClick={() => moveRowUp(row.id)} id={`buttonMoveRowUp-${row.id}`}>
                                     Move this Row UP
                                 </button>
-                            </td>
-                            <td>
+                                <br />
                                 <button type="button" onClick={() => moveRowDown(row.id)} id={`buttonMoveRowDown-${row.id}`}>
                                     Move this Row DOWN
                                 </button>
-                            </td>
-                            <td>
+                                <br />
                                 <button type="button" onClick={() => deleteRow(row.id)} id={`buttonDeleteRow-${row.id}`}>
                                     DELETE this Row
                                 </button>

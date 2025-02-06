@@ -171,50 +171,31 @@ const Table = () => {
 
         setRows(reIndexedRows);
     };
-
     // Render the table
     return (
         <div>
             <table border="1">
                 <thead>
                     <tr>
-                        <th>Row Position</th>
-                        <th>Row ID</th>
-                        <th>Create Row Above Button</th>
-                        <th>Create Row Below Button</th>
-                        <th>Move Row Up Button</th>
-                        <th>Move Row Down Button</th>
-                        <th>Delete Row Button</th>
+                        <th>
+                        </th>
 
                         {columns.map(col => (
                             <th key={col.id}>
                                 Column ID: {col.id}<br />
                                 Column Position: {col.position}<br />
                                 Column Name:<br />
-
                                 <button type="button" id={`buttonCreateColumnRight-${col.id}`} onClick={() => createNewColumnRight(col.id)}>
                                     CREATE New Column on RIGHT
                                 </button>
-
-
-
-
-
-                                <button
-                                    type="button"
-                                    id={`buttonCreateColumnLeft-${col.id}`}
-                                    onClick={() => createNewColumnLeft(col.id)}
-                                >
+                                <br />
+                                <button type="button" id={`buttonCreateColumnLeft-${col.id}`} onClick={() => createNewColumnLeft(col.id)}>
                                     CREATE New Column on LEFT
                                 </button>
-
                                 <br />
-
                                 <button type="button" id="buttonMoveColumnLeft">MOVE this Column LEFT</button><br />
                                 <button type="button" id="buttonMoveColumnRight">MOVE this Column RIGHT</button><br />
-
-                                <button type="button" id="buttonDeleteColumn">DELETE This Column</button>
-
+                                <button type="button" id="buttonDeleteColumn">DELETE this Column</button>
                             </th>
                         ))}
                     </tr>
@@ -222,35 +203,27 @@ const Table = () => {
                 <tbody>
                     {rows.map(row => (
                         <tr key={row.id}>
-                            <td>{row.position}</td>
-                            <td>{row.id}</td>
-                            <td>
+                            <td>Row Position: {row.position}<br />Row ID: {row.id}<br />
                                 <button type="button" onClick={() => createNewRowAbove(row.id)} id={`buttonCreateRowAboveRow-${row.id}`}>
                                     Create New Row ABOVE
                                 </button>
-                            </td>
-                            <td>
+                                <br />
                                 <button type="button" onClick={() => createNewRowBelow(row.id)} id={`buttonCreateRowBelowRow-${row.id}`}>
                                     Create New Row BELOW
                                 </button>
-                            </td>
-                            <td>
+                                <br />
                                 <button type="button" onClick={() => moveRowUp(row.id)} id={`buttonMoveRowUp-${row.id}`}>
                                     Move this Row UP
                                 </button>
-                            </td>
-                            <td>
+                                <br />
                                 <button type="button" onClick={() => moveRowDown(row.id)} id={`buttonMoveRowDown-${row.id}`}>
                                     Move this Row DOWN
                                 </button>
-                            </td>
-
-                            <td>
+                                <br />
                                 <button type="button" onClick={() => deleteRow(row.id)} id={`buttonDeleteRow-${row.id}`}>
-                                    DELETE this row
+                                    DELETE this Row
                                 </button>
                             </td>
-
                             {columns.map(col => (
                                 <td key={`col-${col.id}-row-${row.id}`}>
                                     <input
@@ -273,5 +246,4 @@ const Table = () => {
         </div>
     );
 };
-
 export default Table;

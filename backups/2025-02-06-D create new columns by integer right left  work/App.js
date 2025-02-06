@@ -8,16 +8,15 @@ function App() {
         Data Table Spreadsheet
       </h3>
       <h3>
-        Web Application Concept by Jamie Kayam 2025-02-04
+        Web Application Concept - Created by Jamie Kayam, February 2025
       </h3>
       <p>
-        This is a React.js application that demonstrates a data table with basic functionality.
+        This is a React.js application that demonstrates dynamic functionality applied to a data table with a basic "spreadsheet" styled user interface.
       </p>
+      You can create, move, and delete table rows while maintaining unique ID and position integers for each row.<br />
+      You can also create new table columns while maintaining unique ID and position integers for each column.
       <p>
-        You can create, move, and delete rows while maintaining unique ID and position integers for each row.
-      </p>
-      <p>
-        This design is intended as a starter template for a more complex spreadsheet app.
+        This design is intended as a starter template with core functionality, to be used to develop more complex functionality.
 
       </p>
       <p>
