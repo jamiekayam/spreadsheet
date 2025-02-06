@@ -4,8 +4,10 @@ import React, { useState } from 'react';
 const Table = () => {
     // State to manage rows
     const [rows, setRows] = useState([{ id: 1, position: 1 }]);
+
     // State to manage columns
     const [columns, setColumns] = useState([{ id: 1, position: 1, name: '' }]);
+
     // Function to handle creating a new column on the right
     const createNewColumnRight = (columnId) => {
         // Get the maximum column ID before updating state
@@ -25,44 +27,6 @@ const Table = () => {
             // Shift positions of all columns to the right of the clicked column
             const updatedColumns = prevColumns.map(col =>
                 col.position > clickedColumn.position
-                    ? { ...col, position: col.position + 1 }
-                    : col
-            );
-
-            // Insert new column and sort
-            updatedColumns.push(newColumn);
-            updatedColumns.sort((a, b) => a.position - b.position);
-
-            return updatedColumns;
-        });
-
-        // Ensure new column is added to all rows
-        setRows((prevRows) =>
-            prevRows.map(row => ({
-                ...row,
-                [`column${maxColumnId + 1}`]: '' // Use maxColumnId safely
-            }))
-        );
-    };
-    // Function to handle creating a new column on the left
-    const createNewColumnLeft = (columnId) => {
-        // Get the maximum column ID before updating state
-        const maxColumnId = Math.max(...columns.map(col => col.id), 0);
-
-        setColumns((prevColumns) => {
-            // Find the clicked column and its position
-            const clickedColumn = prevColumns.find(col => col.id === columnId);
-            if (!clickedColumn) return prevColumns;
-
-            const newColumn = {
-                id: maxColumnId + 1,
-                position: clickedColumn.position,
-                name: ''
-            };
-
-            // Shift positions of all columns that are at or to the right of the clicked column
-            const updatedColumns = prevColumns.map(col =>
-                col.position >= clickedColumn.position
                     ? { ...col, position: col.position + 1 }
                     : col
             );
@@ -171,6 +135,7 @@ const Table = () => {
 
         setRows(reIndexedRows);
     };
+
     // Render the table
     return (
         <div>
@@ -184,22 +149,28 @@ const Table = () => {
                         <th>Move Row Up Button</th>
                         <th>Move Row Down Button</th>
                         <th>Delete Row Button</th>
+
                         {columns.map(col => (
                             <th key={col.id}>
                                 Column ID: {col.id}<br />
                                 Column Position: {col.position}<br />
                                 Column Name:<br />
+
                                 <button type="button" id={`buttonCreateColumnRight-${col.id}`} onClick={() => createNewColumnRight(col.id)}>
                                     CREATE New Column on RIGHT
                                 </button>
-                                <br />
-                                <button type="button" id={`buttonCreateColumnLeft-${col.id}`} onClick={() => createNewColumnLeft(col.id)}>
-                                    CREATE New Column on LEFT
-                                </button>
-                                <br />
+
+
+
+
+
+                                <button type="button" id="buttonCreateColumnLeft">CREATE New Column on Left</button><br />
+
                                 <button type="button" id="buttonMoveColumnLeft">MOVE this Column LEFT</button><br />
                                 <button type="button" id="buttonMoveColumnRight">MOVE this Column RIGHT</button><br />
-                                <button type="button" id="buttonDeleteColumn">DELETE this Column</button>
+
+                                <button type="button" id="buttonDeleteColumn">DELETE This Column</button>
+
                             </th>
                         ))}
                     </tr>
@@ -229,11 +200,13 @@ const Table = () => {
                                     Move this Row DOWN
                                 </button>
                             </td>
+
                             <td>
                                 <button type="button" onClick={() => deleteRow(row.id)} id={`buttonDeleteRow-${row.id}`}>
-                                    DELETE this Row
+                                    DELETE this row
                                 </button>
                             </td>
+
                             {columns.map(col => (
                                 <td key={`col-${col.id}-row-${row.id}`}>
                                     <input
@@ -256,4 +229,5 @@ const Table = () => {
         </div>
     );
 };
+
 export default Table;

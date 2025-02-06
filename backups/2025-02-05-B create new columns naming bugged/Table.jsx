@@ -1,87 +1,111 @@
-//Table.jsx
 import React, { useState } from 'react';
 
 const Table = () => {
-    // State to manage rows
-    const [rows, setRows] = useState([{ id: 1, position: 1 }]);
-    // State to manage columns
-    const [columns, setColumns] = useState([{ id: 1, position: 1, name: '' }]);
-    // Function to handle creating a new column on the right
-    const createNewColumnRight = (columnId) => {
-        // Get the maximum column ID before updating state
-        const maxColumnId = Math.max(...columns.map(col => col.id), 0);
+    const [columns, setColumns] = useState(['A']);
+    const [rows, setRows] = useState([
+        { id: 1, position: 1, column2: "", columnC: "", column3: "", column4: "", column5: "", column6: "", column7: "" },
+    ]);
 
-        setColumns((prevColumns) => {
-            // Find the clicked column and its position
-            const clickedColumn = prevColumns.find(col => col.id === columnId);
-            if (!clickedColumn) return prevColumns;
+    // COLUMN FUNCTIONS
+    const generateNextColumnNameRight = (current) => {
+        let result = '';
+        let carry = true;
 
-            const newColumn = {
-                id: maxColumnId + 1,
-                position: clickedColumn.position + 1,
-                name: ''
-            };
+        // Loop through each character of the current column name from right to left
+        for (let i = current.length - 1; i >= 0; i--) {
+            let char = current.charCodeAt(i);
+            if (carry) {
+                if (char === 90) { // 'Z'
+                    result = 'A' + result;
+                } else {
+                    result = String.fromCharCode(char + 1) + result;
+                    carry = false;
+                }
+            } else {
+                result = current[i] + result;
+            }
+        }
 
-            // Shift positions of all columns to the right of the clicked column
-            const updatedColumns = prevColumns.map(col =>
-                col.position > clickedColumn.position
-                    ? { ...col, position: col.position + 1 }
-                    : col
-            );
-
-            // Insert new column and sort
-            updatedColumns.push(newColumn);
-            updatedColumns.sort((a, b) => a.position - b.position);
-
-            return updatedColumns;
-        });
-
-        // Ensure new column is added to all rows
-        setRows((prevRows) =>
-            prevRows.map(row => ({
-                ...row,
-                [`column${maxColumnId + 1}`]: '' // Use maxColumnId safely
-            }))
-        );
+        return carry ? 'A' + result : result;
     };
-    // Function to handle creating a new column on the left
-    const createNewColumnLeft = (columnId) => {
-        // Get the maximum column ID before updating state
-        const maxColumnId = Math.max(...columns.map(col => col.id), 0);
+    const generateNextColumnNameLeft = (current) => {
+        let result = '';
+        let carry = true;
 
-        setColumns((prevColumns) => {
-            // Find the clicked column and its position
-            const clickedColumn = prevColumns.find(col => col.id === columnId);
-            if (!clickedColumn) return prevColumns;
+        // Loop through each character of the current column name from left to right
+        for (let i = 0; i < current.length; i++) {
+            let char = current.charCodeAt(i);
+            if (carry) {
+                if (char === 65) { // 'A'
+                    result = 'Z' + result;
+                } else {
+                    result = String.fromCharCode(char - 1) + result;
+                    carry = false;
+                }
+            } else {
+                result = current[i] + result;
+            }
+        }
 
-            const newColumn = {
-                id: maxColumnId + 1,
-                position: clickedColumn.position,
-                name: ''
-            };
-
-            // Shift positions of all columns that are at or to the right of the clicked column
-            const updatedColumns = prevColumns.map(col =>
-                col.position >= clickedColumn.position
-                    ? { ...col, position: col.position + 1 }
-                    : col
-            );
-
-            // Insert new column and sort
-            updatedColumns.push(newColumn);
-            updatedColumns.sort((a, b) => a.position - b.position);
-
-            return updatedColumns;
-        });
-
-        // Ensure new column is added to all rows
-        setRows((prevRows) =>
-            prevRows.map(row => ({
-                ...row,
-                [`column${maxColumnId + 1}`]: '' // Use maxColumnId safely
-            }))
-        );
+        return carry ? current : result;
     };
+    const createColumnRight = (colName) => {
+        const colIndex = columns.indexOf(colName);
+        if (colIndex === -1) return; // If the column doesn't exist, do nothing
+
+        const newColumns = [...columns];
+        const newColumnName = generateNextColumnNameRight(colName);
+
+        // Insert the new column name right after the clicked column
+        newColumns.splice(colIndex + 1, 0, newColumnName);
+
+        // Adjust the column names of all columns to the right of the newly inserted column
+        for (let i = colIndex + 2; i < newColumns.length; i++) {
+            const previousColName = newColumns[i - 1];
+            newColumns[i] = generateNextColumnNameRight(previousColName); // Update column name based on previous one
+        }
+
+        setColumns(newColumns); // Update state with the new columns array
+
+        // Now, add an empty value for the new column for each row without resetting existing values
+        const updatedRows = rows.map(row => ({
+            ...row,
+            [newColumnName]: row[newColumnName] || '',  // Ensure that the new column doesn't overwrite any existing data
+        }));
+
+        setRows(updatedRows); // Update the rows state with new columns
+    };
+    const createColumnLeft = (colName) => {
+        const colIndex = columns.indexOf(colName);
+        if (colIndex === -1) return; // If the column doesn't exist, do nothing
+
+        const newColumns = [...columns];
+
+        // The clicked column should shift one to the right, so we just increment its name
+        const newColumnName = generateNextColumnNameLeft(colName);
+
+        // Insert the new column name immediately to the left of the clicked column
+        newColumns.splice(colIndex, 0, newColumnName); // Insert the clicked column again with the same name
+
+        // Now rename all columns from the clicked position to the right
+        for (let i = colIndex + 1; i < newColumns.length; i++) {
+            const previousColName = newColumns[i - 1];
+            newColumns[i] = generateNextColumnNameRight(previousColName); // Rename columns based on the previous one
+        }
+
+        setColumns(newColumns); // Update state with the new columns array
+
+        // Now, add an empty value for the new column for each row without resetting existing values
+        const updatedRows = rows.map(row => ({
+            ...row,
+            [newColumnName]: row[newColumnName] || '',  // Ensure that the new column doesn't overwrite any existing data
+        }));
+
+        setRows(updatedRows); // Update the rows state with new columns
+    };
+
+
+    //ROW FUNCTIONS
     // Function to handle creating a new row above a given row
     const createNewRowAbove = (rowId) => {
         const maxId = Math.max(...rows.map(row => row.id));
@@ -89,7 +113,13 @@ const Table = () => {
         const newRow = {
             id: maxId + 1,
             position: 1,
-
+            column2: "",
+            columnC: "",
+            column3: "",
+            column4: "",
+            column5: "",
+            column6: "",
+            column7: ""
         };
 
         const rowIndex = rows.findIndex(row => row.id === rowId);
@@ -112,7 +142,14 @@ const Table = () => {
 
         const newRow = {
             id: maxId + 1,
-            position: 1
+            position: 1,
+            column2: "",
+            columnC: "",
+            column3: "",
+            column4: "",
+            column5: "",
+            column6: "",
+            column7: ""
         };
 
         const rowIndex = rows.findIndex(row => row.id === rowId);
@@ -171,7 +208,6 @@ const Table = () => {
 
         setRows(reIndexedRows);
     };
-    // Render the table
     return (
         <div>
             <table border="1">
@@ -185,21 +221,10 @@ const Table = () => {
                         <th>Move Row Down Button</th>
                         <th>Delete Row Button</th>
                         {columns.map(col => (
-                            <th key={col.id}>
-                                Column ID: {col.id}<br />
-                                Column Position: {col.position}<br />
-                                Column Name:<br />
-                                <button type="button" id={`buttonCreateColumnRight-${col.id}`} onClick={() => createNewColumnRight(col.id)}>
-                                    CREATE New Column on RIGHT
-                                </button>
-                                <br />
-                                <button type="button" id={`buttonCreateColumnLeft-${col.id}`} onClick={() => createNewColumnLeft(col.id)}>
-                                    CREATE New Column on LEFT
-                                </button>
-                                <br />
-                                <button type="button" id="buttonMoveColumnLeft">MOVE this Column LEFT</button><br />
-                                <button type="button" id="buttonMoveColumnRight">MOVE this Column RIGHT</button><br />
-                                <button type="button" id="buttonDeleteColumn">DELETE this Column</button>
+                            <th key={col}>
+                                {col}
+                                <button onClick={() => createColumnLeft(col)}>Create new column on left</button>
+                                <button onClick={() => createColumnRight(col)}>Create new column on right</button>
                             </th>
                         ))}
                     </tr>
@@ -229,21 +254,21 @@ const Table = () => {
                                     Move this Row DOWN
                                 </button>
                             </td>
+
                             <td>
                                 <button type="button" onClick={() => deleteRow(row.id)} id={`buttonDeleteRow-${row.id}`}>
-                                    DELETE this Row
+                                    DELETE this row
                                 </button>
                             </td>
+
                             {columns.map(col => (
-                                <td key={`col-${col.id}-row-${row.id}`}>
+                                <td key={col}>
                                     <input
                                         type="text"
-                                        name={`column${col.id}-${row.id}`}
-                                        value={row[`column${col.id}`] || ''}
+                                        name={`${col}-${row.id}`}
+                                        value={row[col]}
                                         onChange={(e) => {
-                                            const updatedRows = rows.map(r =>
-                                                r.id === row.id ? { ...r, [`column${col.id}`]: e.target.value } : r
-                                            );
+                                            const updatedRows = rows.map(r => r.id === row.id ? { ...r, [col]: e.target.value } : r);
                                             setRows(updatedRows);
                                         }}
                                     />
@@ -256,4 +281,5 @@ const Table = () => {
         </div>
     );
 };
+
 export default Table;

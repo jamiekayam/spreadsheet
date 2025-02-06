@@ -171,6 +171,7 @@ const Table = () => {
 
         setRows(reIndexedRows);
     };
+
     // Render the table
     return (
         <div>
@@ -184,22 +185,36 @@ const Table = () => {
                         <th>Move Row Up Button</th>
                         <th>Move Row Down Button</th>
                         <th>Delete Row Button</th>
+
                         {columns.map(col => (
                             <th key={col.id}>
                                 Column ID: {col.id}<br />
                                 Column Position: {col.position}<br />
                                 Column Name:<br />
+
                                 <button type="button" id={`buttonCreateColumnRight-${col.id}`} onClick={() => createNewColumnRight(col.id)}>
                                     CREATE New Column on RIGHT
                                 </button>
-                                <br />
-                                <button type="button" id={`buttonCreateColumnLeft-${col.id}`} onClick={() => createNewColumnLeft(col.id)}>
+
+
+
+
+
+                                <button
+                                    type="button"
+                                    id={`buttonCreateColumnLeft-${col.id}`}
+                                    onClick={() => createNewColumnLeft(col.id)}
+                                >
                                     CREATE New Column on LEFT
                                 </button>
+
                                 <br />
+
                                 <button type="button" id="buttonMoveColumnLeft">MOVE this Column LEFT</button><br />
                                 <button type="button" id="buttonMoveColumnRight">MOVE this Column RIGHT</button><br />
-                                <button type="button" id="buttonDeleteColumn">DELETE this Column</button>
+
+                                <button type="button" id="buttonDeleteColumn">DELETE This Column</button>
+
                             </th>
                         ))}
                     </tr>
@@ -229,11 +244,13 @@ const Table = () => {
                                     Move this Row DOWN
                                 </button>
                             </td>
+
                             <td>
                                 <button type="button" onClick={() => deleteRow(row.id)} id={`buttonDeleteRow-${row.id}`}>
-                                    DELETE this Row
+                                    DELETE this row
                                 </button>
                             </td>
+
                             {columns.map(col => (
                                 <td key={`col-${col.id}-row-${row.id}`}>
                                     <input
@@ -256,4 +273,5 @@ const Table = () => {
         </div>
     );
 };
+
 export default Table;
